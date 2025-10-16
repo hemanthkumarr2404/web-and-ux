@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Event Handling — Interactive Demo</title>
+  <style>
+    :root {
+      --bg: #f5f8fa;
+      --card-bg: #ffffff;
+      --border: #d0d7de;
+      --primary: #0059b3;
+      --accent: #00897b;
+      --error: #d32f2f;
+      --success: #2e7d32;
+      --text: #222;
+    }
+
+    body {
+      font-family: "Segoe UI", Roboto, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      margin: 40px auto;
+      max-width: 800px;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      color: var(--primary);
+      margin-bottom: 24px;
+    }
+
+    h2 {
+      color: var(--accent);
+      border-bottom: 2px solid var(--accent);
+      padding-bottom: 4px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      padding: 18px;
+      border-radius: 10px;
+      margin-top: 20px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      transition: box-shadow 0.3s;
+    }
+
+    .card:hover {
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    button, input[type="text"], input[type="email"] {
+      padding: 8px 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 15px;
+    }
+
+    button {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: var(--accent);
+    }
+
+    input[type="text"]:focus, input[type="email"]:focus {
+      border-color: var(--primary);
+      outline: none;
+      box-shadow: 0 0 3px rgba(0, 89, 179, 0.4);
+    }
+
+    .error {
+      color: var(--error);
+      font-weight: bold;
+    }
+
+    .success {
+      color: var(--success);
+      font-weight: bold;
+    }
+
+    #hoverBox {
+      width: 220px;
+      height: 110px;
+      background: #eaf2ff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      margin-top: 10px;
+      transition: background 0.3s, transform 0.3s;
+    }
+
+    #hoverBox:hover {
+      transform: scale(1.02);
+    }
+
+    p {
+      margin-top: 10px;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+  <h1>Event Handling — Interactive Demonstration</h1>
+
+  <!-- Section 1: Click Event -->
+  <section class="card">
+    <h2>Click Event Example</h2>
+    <button id="clickMe">Click Me</button>
+    <p id="clickMessage">You haven’t clicked the button yet.</p>
+  </section>
+
+  <!-- Section 2: Keypress Event -->
+  <section class="card">
+    <h2>Keypress Event Example</h2>
+    <input type="text" id="keypressInput" placeholder="Start typing here...">
+    <p id="keyOutput">Waiting for keyboard input...</p>
+  </section>
+
+  <!-- Section 3: Form Validation -->
+  <section class="card">
+    <h2>Form Validation Example</h2>
+    <form id="signupForm">
+      <label>Name: <input type="text" id="name" required></label><br><br>
+      <label>Email: <input type="email" id="email" required></label><br><br>
+      <button type="submit">Submit</button>
+    </form>
+    <p id="formMessage"></p>
+  </section>
+
+  <!-- Section 4: Mouse Events -->
+  <section class="card">
+    <h2>Mouse Events Example</h2>
+    <div id="hoverBox">Hover over this box</div>
+    <p id="hoverMessage">Mouse activity not detected yet.</p>
+  </section>
+
+  <script>
+    // --- Click Event ---
+    let clickCount = 0;
+    const clickBtn = document.getElementById('clickMe');
+    const clickMsg = document.getElementById('clickMessage');
+
+    clickBtn.addEventListener('click', () => {
+      clickCount++;
+      clickMsg.textContent = `Button clicked ${clickCount} time${clickCount > 1 ? 's' : ''}.`;
+    });
+
+    // --- Keypress Event ---
+    const input = document.getElementById('keypressInput');
+    const output = document.getElementById('keyOutput');
+    input.addEventListener('keydown', (event) => {
+      output.textContent = `Key pressed: ${event.key}`;
+    });
+
+    // --- Form Validation ---
+    const form = document.getElementById('signupForm');
+    const msg = document.getElementById('formMessage');
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim();
+
+      if (!name || !email) {
+        msg.textContent = 'Please fill out both name and email fields.';
+        msg.className = 'error';
+        return;
+      }
+
+      if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+        msg.textContent = 'Enter a valid email address.';
+        msg.className = 'error';
+        return;
+      }
+
+      msg.textContent = `Thank you, ${name}. Your email (${email}) has been successfully recorded.`;
+      msg.className = 'success';
+      form.reset();
+    });
+
+    // --- Mouse Events ---
+    const box = document.getElementById('hoverBox');
+    const hoverMsg = document.getElementById('hoverMessage');
+
+    box.addEventListener('mouseenter', () => {
+      hoverMsg.textContent = 'Mouse entered the area.';
+      box.style.background = '#cde5ff';
+    });
+
+    box.addEventListener('mouseleave', () => {
+      hoverMsg.textContent = 'Mouse left the area.';
+      box.style.background = '#eaf2ff';
+    });
+
+    box.addEventListener('dblclick', () => {
+      hoverMsg.textContent = 'Box double-clicked.';
+      box.style.background = '#b3daff';
+    });
+  </script>
+</body>
+</html>

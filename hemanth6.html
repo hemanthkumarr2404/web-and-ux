@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>DOM Manipulation — Practice Exercise</title>
+  <style>
+    :root {
+      --primary: #1e3a8a;
+      --light: #f8fafc;
+      --border: #d1d5db;
+      --highlight: #dbeafe;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      line-height: 1.5;
+    }
+
+    body {
+      max-width: 900px;
+      margin: 32px auto;
+      padding: 16px;
+      background-color: var(--light);
+      color: #222;
+    }
+
+    header {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      color: var(--primary);
+      margin: 0;
+    }
+
+    small {
+      color: #555;
+    }
+
+    .card {
+      border: 1px solid var(--border);
+      padding: 16px;
+      border-radius: 8px;
+      margin-top: 16px;
+      background-color: #fff;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    }
+
+    h2 {
+      color: var(--primary);
+      margin-bottom: 10px;
+      font-size: 20px;
+    }
+
+    button {
+      padding: 8px 14px;
+      border-radius: 6px;
+      border: 1px solid var(--primary);
+      background: var(--primary);
+      color: #fff;
+      cursor: pointer;
+      transition: background 0.3s;
+      font-size: 15px;
+    }
+
+    button:hover {
+      background: #153074;
+    }
+
+    input[type=text] {
+      padding: 6px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 15px;
+    }
+
+    ul {
+      padding-left: 20px;
+      margin-top: 10px;
+    }
+
+    li {
+      margin-bottom: 6px;
+    }
+
+    .highlight {
+      background: var(--highlight);
+      transition: background 0.3s;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>DOM Manipulation — Practice Exercise</h1>
+    <small>Learn how to create, update, and remove elements and attributes using JavaScript.</small>
+  </header>
+
+  <!-- Section 1: Changing text content -->
+  <section class="card" id="textCard">
+    <h2>1. Update Text Content</h2>
+    <p id="intro">This paragraph will change when you click the button below.</p>
+    <button id="changeTextBtn">Change Text</button>
+  </section>
+
+  <!-- Section 2: Using user input to update DOM -->
+  <section class="card" id="inputCard">
+    <h2>2. Update Heading Using Input</h2>
+    <label>
+      Enter a new heading: <input type="text" id="headingInput" placeholder="Type here" />
+    </label>
+    <button id="applyHeading">Apply</button>
+    <h3 id="liveHeading">Default Heading</h3>
+  </section>
+
+  <!-- Section 3: Add / remove list items -->
+  <section class="card" id="listCard">
+    <h2>3. Manage List Items</h2>
+    <input type="text" id="itemInput" placeholder="Add new item" />
+    <button id="addItem">Add</button>
+    <button id="clearList">Clear All</button>
+    <ul id="todoList">
+      <li>Sample item 1 <button class="remove">Remove</button></li>
+      <li>Sample item 2 <button class="remove">Remove</button></li>
+    </ul>
+  </section>
+
+  <!-- Section 4: Create element & attributes -->
+  <section class="card" id="createCard">
+    <h2>4. Create and Remove Elements</h2>
+    <button id="createBoxBtn">Create Element</button>
+    <div id="createdArea"></div>
+  </section>
+
+  <!-- Section 5: Toggle class and styles -->
+  <section class="card" id="toggleCard">
+    <h2>5. Toggle Class and Style</h2>
+    <p id="togText">Click the button to toggle highlighting for this text.</p>
+    <button id="toggleBtn">Toggle Highlight</button>
+  </section>
+
+  <script>
+    const $ = (sel, ctx = document) => ctx.querySelector(sel);
+    const $$ = (sel, ctx = document) => Array.from(ctx.querySelectorAll(sel));
+
+    // 1) Change text content
+    $('#changeTextBtn').addEventListener('click', () => {
+      $('#intro').textContent = 'The text was updated at ' + new Date().toLocaleTimeString();
+    });
+
+    // 2) Use input to update heading
+    $('#applyHeading').addEventListener('click', () => {
+      const value = $('#headingInput').value.trim();
+      const heading = $('#liveHeading');
+      heading.textContent = value || 'Default Heading';
+    });
+
+    // 3) Add/remove list items
+    const todoList = $('#todoList');
+
+    $('#addItem').addEventListener('click', () => {
+      const text = $('#itemInput').value.trim();
+      if (!text) return;
+      const li = document.createElement('li');
+      li.innerHTML = `${escapeHtml(text)} <button class="remove">Remove</button>`;
+      todoList.appendChild(li);
+      $('#itemInput').value = '';
+    });
+
+    $('#clearList').addEventListener('click', () => {
+      while (todoList.firstChild) todoList.removeChild(todoList.firstChild);
+    });
+
+    todoList.addEventListener('click', (e) => {
+      if (e.target.matches('button.remove')) {
+        e.target.closest('li').remove();
+      }
+    });
+
+    // 4) Create simple box element instead of image
+    $('#createBoxBtn').addEventListener('click', () => {
+      const area = $('#createdArea');
+      const existing = $('#createdArea div');
+      if (existing) {
+        existing.remove();
+        return;
+      }
+      const box = document.createElement('div');
+      box.textContent = 'New element created successfully.';
+      box.style.marginTop = '10px';
+      box.style.padding = '10px';
+      box.style.border = '1px solid #999';
+      box.style.borderRadius = '6px';
+      box.style.background = '#eef2ff';
+      area.appendChild(box);
+    });
+
+    // 5) Toggle class
+    $('#toggleBtn').addEventListener('click', () => {
+      $('#togText').classList.toggle('highlight');
+    });
+
+    // Utility: escape HTML to avoid issues
+    function escapeHtml(str) {
+      return str.replace(/[&<>"']/g, (c) => ({
+        '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+      }[c]));
+    }
+
+    // Allow Enter key to add list item
+    $('#itemInput').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        $('#addItem').click();
+      }
+    });
+  </script>
+</body>
+</html>

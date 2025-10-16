@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Interactive DOM Manipulation</title>
+  <style>
+    :root {
+      font-family: "Poppins", Arial, sans-serif;
+      line-height: 1.5;
+      --primary: #0077ff;
+      --secondary: #ff9800;
+      --bg: #f4f7fb;
+      --card-bg: #ffffff;
+      --border: #dcdcdc;
+    }
+
+    body {
+      background: var(--bg);
+      max-width: 900px;
+      margin: 30px auto;
+      padding: 20px;
+    }
+
+    header {
+      text-align: center;
+      background: var(--primary);
+      color: #fff;
+      padding: 16px;
+      border-radius: 10px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+    }
+
+    h1 {
+      margin: 0;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      margin-top: 20px;
+      padding: 16px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      transition: 0.3s;
+    }
+
+    .card:hover {
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    button {
+      background: var(--primary);
+      color: #fff;
+      padding: 8px 14px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: var(--secondary);
+      transform: scale(1.05);
+    }
+
+    input[type=text] {
+      padding: 6px 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      margin-right: 8px;
+    }
+
+    ul {
+      padding-left: 20px;
+    }
+
+    li {
+      margin: 5px 0;
+    }
+
+    li button {
+      background: #ff4d4d;
+      color: white;
+      padding: 4px 8px;
+      font-size: 0.9em;
+    }
+
+    .highlight {
+      background: linear-gradient(90deg, rgba(255,255,150,0.8), rgba(255,255,255,0));
+      border-left: 5px solid var(--secondary);
+      padding-left: 5px;
+    }
+
+    small {
+      font-size: 0.9em;
+      color: #eee;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1> Interactive DOM Manipulation </h1>
+    <small>Experiment with text, lists, elements, and styles!</small>
+  </header>
+
+  <!-- Section 1 -->
+  <section class="card" id="textCard">
+    <h2> Update Text Content</h2>
+    <p id="intro">Click the button to change this text.</p>
+    <button id="changeTextBtn">Change Text</button>
+  </section>
+
+  <!-- Section 2 -->
+  <section class="card" id="inputCard">
+    <h2> Dynamic Heading Update</h2>
+    <label>
+      Enter new heading:
+      <input type="text" id="headingInput" placeholder="Type your new heading" />
+    </label>
+    <button id="applyHeading">Apply Heading</button>
+    <h3 id="liveHeading">This is the original heading</h3>
+  </section>
+
+  <!-- Section 3 -->
+  <section class="card" id="listCard">
+    <h2> Manage To-Do List</h2>
+    <input type="text" id="itemInput" placeholder="Enter a new item" />
+    <button id="addItem">Add Item</button>
+    <button id="clearList">Clear All</button>
+    <ul id="todoList">
+      <li>Example Task 1 <button class="remove">Remove</button></li>
+      <li>Example Task 2 <button class="remove">Remove</button></li>
+    </ul>
+  </section>
+
+  <!-- Section 4 -->
+  <section class="card" id="createCard">
+    <h2> Create Image Element</h2>
+    <button id="createImgBtn">Show / Remove Image</button>
+    <div id="createdArea"></div>
+  </section>
+
+  <!-- Section 5 -->
+  <section class="card" id="toggleCard">
+    <h2> Toggle Highlight</h2>
+    <p id="togText">Click the button to highlight this text with a nice glow effect.</p>
+    <button id="toggleBtn">Toggle Highlight</button>
+  </section>
+
+  <script>
+    // --- Select helper functions ---
+    const $ = (sel, ctx = document) => ctx.querySelector(sel);
+
+    // 1️⃣ Change text content
+    $('#changeTextBtn').addEventListener('click', () => {
+      $('#intro').textContent =
+        'Text updated successfully at ' + new Date().toLocaleTimeString();
+    });
+
+    // 2️ Use input to update DOM
+    $('#applyHeading').addEventListener('click', () => {
+      const val = $('#headingInput').value.trim();
+      const live = $('#liveHeading');
+      live.textContent = val || 'This is the original heading';
+    });
+
+    // 3Add/remove list items
+    const todoList = $('#todoList');
+    $('#addItem').addEventListener('click', () => {
+      const text = $('#itemInput').value.trim();
+      if (!text) return;
+      const li = document.createElement('li');
+      li.innerHTML = `${escapeHtml(text)} <button class="remove">Remove</button>`;
+      todoList.appendChild(li);
+      $('#itemInput').value = '';
+    });
+
+    // Clear all
+    $('#clearList').addEventListener('click', () => {
+      while (todoList.firstChild) todoList.removeChild(todoList.firstChild);
+    });
+
+    // Remove single item (event delegation)
+    todoList.addEventListener('click', (e) => {
+      if (e.target.matches('button.remove')) e.target.closest('li').remove();
+    });
+
+    // 4️ Create / remove image
+    $('#createImgBtn').addEventListener('click', () => {
+      const area = $('#createdArea');
+      const existing = $('#createdArea img');
+      if (existing) return existing.remove();
+
+      const img = document.createElement('img');
+      img.src = 'https://placekitten.com/320/180';
+      img.alt = 'Adorable kitten';
+      img.style.display = 'block';
+      img.style.marginTop = '12px';
+      img.style.borderRadius = '10px';
+      img.style.boxShadow = '0 4px 10px rgba(0,0,0,0.2)';
+      area.appendChild(img);
+    });
+
+    // 5️ Toggle highlight
+    $('#toggleBtn').addEventListener('click', () => {
+      $('#togText').classList.toggle('highlight');
+    });
+
+    // Utility
+    function escapeHtml(str) {
+      return str.replace(/[&<>"']/g, (c) => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      }[c]));
+    }
+
+    // Press Enter to add item
+    $('#itemInput').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        $('#addItem').click();
+      }
+    });
+  </script>
+</body>
+</html>

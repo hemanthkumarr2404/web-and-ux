@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>All-in-One Web Projects</title>
+  <style>
+    /* ===== COLOR PALETTE =====
+       Background gradient: soft blue → purple
+       Accent: teal and indigo
+       Text: dark gray
+    */
+    :root {
+      --bg1: #e0f2ff;
+      --bg2: #f0e6ff;
+      --accent: #5a67d8;
+      --accent2: #38b2ac;
+      --text: #222;
+      --card: #ffffff;
+      --shadow: rgba(0, 0, 0, 0.1);
+    }
+
+    /* ===== BASIC RESET ===== */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: linear-gradient(135deg, var(--bg1), var(--bg2));
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    /* ===== HEADER ===== */
+    header {
+      background: linear-gradient(90deg, var(--accent2), var(--accent));
+      color: white;
+      padding: 20px 0;
+      text-align: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 10px var(--shadow);
+    }
+    header h1 {
+      font-size: 28px;
+      margin-bottom: 8px;
+      letter-spacing: 0.5px;
+    }
+    nav ul {
+      list-style: none;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    nav a {
+      color: white;
+      text-decoration: none;
+      font-weight: 500;
+      transition: 0.3s;
+      padding: 5px 10px;
+      border-radius: 6px;
+    }
+    nav a:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    /* ===== SECTION WRAPPER ===== */
+    section {
+      max-width: 1000px;
+      margin: 50px auto;
+      padding: 30px 25px;
+      background: var(--card);
+      border-radius: 14px;
+      box-shadow: 0 5px 20px var(--shadow);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    section:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+    }
+    section h2 {
+      color: var(--accent);
+      margin-bottom: 12px;
+      text-align: center;
+    }
+    section h3 {
+      color: var(--accent2);
+      margin-top: 20px;
+    }
+
+    /* ===== CARDS ===== */
+    .card {
+      border: 1px solid #ddd;
+      padding: 15px;
+      border-radius: 10px;
+      margin-top: 16px;
+      background: #fafaff;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    /* ===== FORMS & BUTTONS ===== */
+    button, input, select, textarea {
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font: inherit;
+    }
+    button {
+      cursor: pointer;
+      background: linear-gradient(90deg, var(--accent2), var(--accent));
+      color: white;
+      border: none;
+      transition: all 0.3s ease;
+      font-weight: 600;
+    }
+    button:hover {
+      transform: scale(1.05);
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      box-shadow: 0 4px 10px var(--shadow);
+    }
+
+    /* ===== HIGHLIGHTS & STATUS ===== */
+    .highlight {
+      background: linear-gradient(90deg, rgba(255,255,200,0.6), rgba(255,255,255,0.0));
+    }
+    .error { color: #e53e3e; font-weight: bold; }
+    .success { color: #38a169; font-weight: bold; }
+
+    /* ===== FOOTER ===== */
+    footer {
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      color: white;
+      text-align: center;
+      padding: 15px 0;
+      margin-top: 40px;
+      box-shadow: 0 -2px 10px var(--shadow);
+    }
+
+    /* ===== LAYOUTS ===== */
+    .grid { 
+      display: grid; 
+      grid-template-columns: 1fr 360px; 
+      gap: 20px; 
+    }
+    aside .card { background: #f8f9ff; }
+    ul { padding-left: 20px; }
+    .wire {
+      min-height:180px;
+      border:2px dashed #cbd5e0;
+      padding:8px;
+      border-radius:8px;
+      background:#f9f9ff;
+    }
+
+    /* ===== LINKS ===== */
+    a {
+      color: var(--accent2);
+      text-decoration: none;
+      font-weight: 500;
+    }
+    a:hover { text-decoration: underline; }
+
+  </style>
+</head>
+<body>
+  <header>
+    <h1>All-in-One Web Practice Site</h1>
+    <nav>
+      <ul>
+        <li><a href="#simple">Simple Website</a></li>
+        <li><a href="#dom">DOM Manipulation</a></li>
+        <li><a href="#events">Event Handling</a></li>
+        <li><a href="#ux">UX Design Lab</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- ===== SIMPLE ONE-PAGE WEBSITE ===== -->
+  <section id="simple">
+    <h2>My Simple One-Page Website</h2>
+    <p>This section is built using only HTML & CSS — a clean and responsive single-page design.</p>
+
+    <h3>About Me</h3>
+    <p>Hi! I'm learning web development. This example shows how we can create a single-page layout easily.</p>
+
+    <h3>My Services</h3>
+    <ul>
+      <li>🌐 Web Design</li>
+      <li>💻 Frontend Development</li>
+      <li>⚙️ Project Implementation</li>
+    </ul>
+
+    <h3>Contact</h3>
+    <a href="mailto:example@email.com"><button>Send Email</button></a>
+  </section>
+
+  <!-- ===== DOM MANIPULATION ===== -->
+  <section id="dom">
+    <h2>DOM Manipulation — Live Exercises</h2>
+
+    <div class="card">
+      <h3>Update text content</h3>
+      <p id="intro">This text will change when you click the button below.</p>
+      <button id="changeTextBtn">Change Text</button>
+    </div>
+
+    <div class="card">
+      <h3>Use input to update DOM</h3>
+      <label>New heading: <input type="text" id="headingInput" placeholder="Type a new heading"></label>
+      <button id="applyHeading">Apply</button>
+      <h4 id="liveHeading">Original heading</h4>
+    </div>
+
+    <div class="card">
+      <h3>Manage a list</h3>
+      <input type="text" id="itemInput" placeholder="New todo item">
+      <button id="addItem">Add item</button>
+      <button id="clearList">Clear list</button>
+      <ul id="todoList">
+        <li>Example item 1 <button class="remove">Remove</button></li>
+        <li>Example item 2 <button class="remove">Remove</button></li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>Create element & attributes</h3>
+      <button id="createImgBtn">Create image element</button>
+      <div id="createdArea"></div>
+    </div>
+
+    <div class="card">
+      <h3>Toggle class highlight</h3>
+      <p id="togText">Click the toggle button to highlight this paragraph.</p>
+      <button id="toggleBtn">Toggle highlight</button>
+    </div>
+  </section>
+
+  <!-- ===== EVENT HANDLING ===== -->
+  <section id="events">
+    <h2>Event Handling Examples</h2>
+
+    <div class="card">
+      <h3>Click Event</h3>
+      <button id="clickMe">Click Me!</button>
+      <p id="clickMessage">No clicks yet.</p>
+    </div>
+
+    <div class="card">
+      <h3>Keypress Event</h3>
+      <input type="text" id="keypressInput" placeholder="Type something...">
+      <p id="keyOutput">Keys pressed: none</p>
+    </div>
+
+    <div class="card">
+      <h3>Form Validation</h3>
+      <form id="signupForm">
+        <label>Name: <input type="text" id="name" required></label><br><br>
+        <label>Email: <input type="email" id="email" required></label><br><br>
+        <button type="submit">Submit</button>
+      </form>
+      <p id="formMessage"></p>
+    </div>
+
+    <div class="card">
+      <h3>Mouse Events</h3>
+      <div id="hoverBox" style="width:200px;height:100px;background:#e6f0ff;display:flex;align-items:center;justify-content:center;border-radius:8px;">
+        Hover over me!
+      </div>
+      <p id="hoverMessage">No hover detected.</p>
+    </div>
+  </section>
+
+  <!-- ===== UX DESIGN LAB ===== -->
+  <section id="ux">
+    <h2>UX Design Lab — Hands-on</h2>
+    <p>This section demonstrates UX activities like persona creation, usability tasks, accessible forms, and quick prototyping.</p>
+
+    <div class="grid">
+      <main>
+        <div class="card">
+          <h3>1. Create a quick persona</h3>
+          <label>Name <input id="personaName" placeholder="Sonal, Raj..."></label>
+          <label>Age <input id="personaAge" type="number" min="14" max="100"></label>
+          <label>Primary goal <input id="personaGoal" placeholder="What do they want to achieve?"></label>
+          <label>Frustrations <input id="personaFrustration" placeholder="e.g., slow load, too many steps"></label>
+          <button id="makePersona">Generate Persona</button>
+          <div id="personaOut" style="margin-top:10px"></div>
+        </div>
+
+        <div class="card">
+          <h3>2. Usability task — Checkout flow</h3>
+          <ol>
+            <li>Find product</li><li>Add to cart</li><li>Complete checkout</li>
+          </ol>
+          <label>Task notes: <textarea id="taskNotes" rows="3"></textarea></label>
+          <button id="submitTask">Record task</button>
+          <div id="taskResult" style="margin-top:8px"></div>
+        </div>
+
+        <div class="card">
+          <h3>3. Accessible form</h3>
+          <form id="accessForm" novalidate>
+            <label>Full name <input id="fullName" required></label>
+            <label>Email <input id="uxEmail" type="email" required></label>
+            <label>Plan <select id="plan"><option>Free</option><option>Pro</option><option>Enterprise</option></select></label>
+            <button type="submit">Sign up</button>
+          </form>
+          <div id="formFeedback" role="status" aria-live="polite" style="margin-top:8px"></div>
+        </div>
+
+        <div class="card">
+          <h3>4. Low-fi Wireframe</h3>
+          <div id="wireframe" class="wire" contenteditable="true" spellcheck="false">
+            Header
+
+- Hero heading
+- Primary CTA
+
+Section: Features
+
+Footer
+          </div>
+          <div style="margin-top:8px"><button id="saveWire">Save wireframe</button> <button id="resetWire">Reset</button></div>
+          <div id="wireSaved" style="margin-top:6px;color:#666"></div>
+        </div>
+      </main>
+
+      <aside>
+        <div class="card">
+          <h4>Quick checklist</h4>
+          <ul>
+            <li>Is the primary task obvious?</li>
+            <li>Are controls labelled clearly?</li>
+            <li>Keyboard accessible?</li>
+            <li>Provide feedback & error states?</li>
+            <li>Test with real users early</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer>
+    <p>&copy; 2025 All-in-One Practice Website | Created for Learning HTML, CSS & JS</p>
+  </footer>
+
+  <!-- ===== JAVASCRIPT FOR ALL INTERACTIONS ===== -->
+  <script>
+    const $ = (sel, ctx=document) => ctx.querySelector(sel);
+
+    // --- DOM Manipulation Section ---
+    $('#changeTextBtn').addEventListener('click',()=>$('#intro').textContent='Text updated at '+new Date().toLocaleTimeString());
+    $('#applyHeading').addEventListener('click',()=>$('#liveHeading').textContent=$('#headingInput').value.trim()||'Original heading');
+    const todoList=$('#todoList');
+    $('#addItem').addEventListener('click',()=>{const t=$('#itemInput').value.trim();if(!t)return;const li=document.createElement('li');li.innerHTML=`${t} <button class="remove">Remove</button>`;todoList.appendChild(li);$('#itemInput').value='';});
+    $('#clearList').addEventListener('click',()=>todoList.innerHTML='');
+    todoList.addEventListener('click',e=>{if(e.target.matches('button.remove'))e.target.closest('li').remove();});
+    $('#createImgBtn').addEventListener('click',()=>{const a=$('#createdArea'),i=$('#createdArea img');if(i){i.remove();return;}const n=document.createElement('img');n.src='https://placekitten.com/320/180';n.alt='Cute kitten';n.style.marginTop='8px';a.appendChild(n);});
+    $('#toggleBtn').addEventListener('click',()=>$('#togText').classList.toggle('highlight'));
+
+    // --- Event Handling Section ---
+    let clicks=0;
+    $('#clickMe').addEventListener('click',()=>$('#clickMessage').textContent=`Button clicked ${++clicks} time${clicks>1?'s':''}`);
+    $('#keypressInput').addEventListener('keydown',e=>$('#keyOutput').textContent='Key pressed: '+e.key);
+    $('#signupForm').addEventListener('submit',e=>{
+      e.preventDefault();
+      const n=$('#name').value.trim(),em=$('#email').value.trim(),m=$('#formMessage');
+      if(!n||!em){m.textContent='All fields required!';m.className='error';return;}
+      if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)){m.textContent='Invalid email!';m.className='error';return;}
+      m.textContent=`Welcome, ${n}! Email (${em}) recorded.`;m.className='success';e.target.reset();
+    });
+    const box=$('#hoverBox');
+    box.addEventListener('mouseenter',()=>{box.style.background='#cce5ff';$('#hoverMessage').textContent='Mouse entered box!';});
+    box.addEventListener('mouseleave',()=>{box.style.background='#e6f0ff';$('#hoverMessage').textContent='Mouse left box!';});
+    box.addEventListener('dblclick',()=>{box.style.background='#aaf';$('#hoverMessage').textContent='Box double-clicked!';});
+
+    // --- UX Design Lab ---
+    $('#makePersona').addEventListener('click',()=>{const n=$('#personaName').value||'Unknown',a=$('#personaAge').value||'N/A',g=$('#personaGoal').value||'No goal',f=$('#personaFrustration').value||'None';$('#personaOut').innerHTML=`<b>${n}</b> (age ${a}) wants to <i>${g}</i> but feels frustrated by "${f}".`;});
+    $('#submitTask').addEventListener('click',()=>{$('#taskResult').textContent='Task notes recorded: '+($('#taskNotes').value||'No notes.');});
+    $('#accessForm').addEventListener('submit',e=>{e.preventDefault();const n=$('#fullName').value.trim(),em=$('#uxEmail').value.trim();if(!n||!em){$('#formFeedback').textContent='Please fill all fields.';return;}$('#formFeedback').textContent='Form submitted successfully for '+n;});
+    $('#saveWire').addEventListener('click',()=>$('#wireSaved').textContent='Wireframe saved at '+new Date().toLocaleTimeString());
+    $('#resetWire').addEventListener('click',()=>{$('#wireframe').textContent='Header\\n\\n- Hero heading\\n- Primary CTA\\n\\nSection: Features\\n\\nFooter';$('#wireSaved').textContent='Wireframe reset.';});
+  </script>
+</body>
+</html>
