@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ApexTrade Simulator - Stock Market Project</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load Inter Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+    
+    <!-- Custom Tailwind Configuration (Dark Theme for a professional finance look) -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'bg-dark': '#0f172a',    /* Slate 900 */
+                        'primary': '#3b82f6',    /* Blue (UI/Accent) */
+                        'success': '#10b981',    /* Emerald (Up/Gain) */
+                        'danger': '#ef4444',     /* Red (Down/Loss) */
+                        'card': '#1e293b',       /* Slate 800 (Card backgrounds) */
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Ensures smooth scrolling for navigation */
+        html { scroll-behavior: smooth; }
+        /* Style for the chart/price change text */
+        .price-change {
+            transition: color 0.5s ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-bg-dark font-sans text-gray-100 min-h-screen">
+
+    <!-- 1. Header and Navigation -->
+    <header class="sticky top-0 z-50 bg-card shadow-lg shadow-gray-900/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo/Title -->
+                <a href="#" class="text-3xl font-extrabold text-primary tracking-wider">
+                    ApexTrade <span class="text-success text-lg font-medium">Simulator</span>
+                </a>
+                
+                <!-- Navigation Links -->
+                <nav class="hidden md:flex space-x-6 text-sm font-medium">
+                    <a href="#market" class="text-gray-300 hover:text-primary transition duration-150">Market Watch</a>
+                    <a href="#portfolio" class="text-gray-300 hover:text-primary transition duration-150">My Portfolio</a>
+                    <a href="#trade" class="px-3 py-1 bg-primary text-white rounded-lg hover:bg-blue-600 transition duration-150 transform hover:scale-105">Trade Now</a>
+                    <a href="#community" class="text-gray-300 hover:text-primary transition duration-150">Community</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        
+        <!-- 2. Portfolio & Trading Dashboard -->
+        <section id="dashboard" class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
+            
+            <!-- A. Portfolio Summary -->
+            <div id="portfolio" class="lg:col-span-2 bg-card p-6 rounded-xl shadow-2xl border border-gray-700/50">
+                <h2 class="text-2xl font-bold text-gray-50 mb-6 border-b border-primary/50 pb-2">My Portfolio Summary</h2>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+                    <div class="bg-slate-700/50 p-4 rounded-lg">
+                        <p class="text-sm text-gray-400">Cash Balance (INR)</p>
+                        <p id="cash-balance" class="text-3xl font-extrabold text-white mt-1">₹50,000</p>
+                    </div>
+                    <div class="bg-slate-700/50 p-4 rounded-lg">
+                        <p class="text-sm text-gray-400">Total Holdings Value</p>
+                        <p id="holdings-value" class="text-3xl font-extrabold text-white mt-1">₹0.00</p>
+                    </div>
+                    <div class="bg-slate-700/50 p-4 rounded-lg">
+                        <p class="text-sm text-gray-400">Total Portfolio Value</p>
+                        <p id="total-value" class="text-3xl font-extrabold text-white mt-1 text-success">₹50,000</p>
+                    </div>
+                </div>
+
+                <h3 class="text-xl font-semibold text-gray-50 mb-4 border-b border-gray-700 pb-1">Current Holdings</h3>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-700">
+                        <thead>
+                            <tr class="text-left text-sm font-medium text-gray-400">
+                                <th class="py-3 pr-3">Stock</th>
+                                <th class="py-3 pr-3 text-right">Shares</th>
+                                <th class="py-3 pr-3 text-right">Avg. Cost</th>
+                                <th class="py-3 pr-3 text-right">Current Price</th>
+                                <th class="py-3 text-right">Gain/Loss (%)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="portfolio-body" class="divide-y divide-gray-800">
+                            <!-- Portfolio items will be inserted here by JavaScript -->
+                            <tr class="text-sm text-gray-400"><td colspan="5" class="py-4 text-center">No holdings yet. Buy a stock!</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- B. Trading Panel -->
+            <div id="trade" class="bg-card p-6 rounded-xl shadow-2xl border border-gray-700/50 h-fit sticky top-20">
+                <h2 class="text-2xl font-bold text-gray-50 mb-6 border-b border-primary/50 pb-2">Execute Trade</h2>
+
+                <form id="trade-form" onsubmit="handleTrade(event)">
+                    <div class="space-y-4">
+                        <!-- Stock Selector -->
+                        <div>
+                            <label for="stock-select" class="block text-sm font-medium text-gray-300 mb-1">Select Stock</label>
+                            <select id="stock-select" name="symbol" required
+                                class="w-full bg-slate-700 border border-slate-600 text-white rounded-lg p-3 focus:ring-primary focus:border-primary">
+                                <option value="" disabled selected>Choose a stock</option>
+                                <!-- Options will be populated by JS -->
+                            </select>
+                        </div>
+                        
+                        <!-- Quantity Input -->
+                        <div>
+                            <label for="quantity" class="block text-sm font-medium text-gray-300 mb-1">Quantity (Shares)</label>
+                            <input type="number" id="quantity" name="quantity" required min="1" value="1"
+                                class="w-full bg-slate-700 border border-slate-600 text-white rounded-lg p-3 focus:ring-primary focus:border-primary">
+                        </div>
+                        
+                        <!-- Action Buttons -->
+                        <div class="flex space-x-4 pt-2">
+                            <button type="submit" data-action="buy" 
+                                class="flex-1 py-3 bg-success text-white font-bold rounded-lg shadow-md hover:bg-emerald-600 transition duration-150">
+                                Buy Shares
+                            </button>
+                            <button type="submit" data-action="sell"
+                                class="flex-1 py-3 bg-danger text-white font-bold rounded-lg shadow-md hover:bg-red-600 transition duration-150">
+                                Sell Shares
+                            </button>
+                        </div>
+                        
+                        <!-- Output Message -->
+                        <div id="trade-message" class="text-sm pt-2 text-center font-medium"></div>
+                    </div>
+                </form>
+            </div>
+        </section>
+        
+        <!-- 3. Market Watch Section -->
+        <section id="market" class="mb-16">
+            <h2 class="text-4xl font-extrabold text-primary mb-8 border-b-4 border-primary/50 pb-2 inline-block">
+                Market Watch (Live Simulator)
+            </h2>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6" id="market-watch-grid">
+                <!-- Stock cards will be inserted here by JavaScript -->
+            </div>
+        </section>
+        
+        <!-- 4. Community Reviews/Discussion -->
+        <section id="community" class="py-12 bg-card p-8 rounded-xl shadow-2xl border border-gray-700/50">
+            <h2 class="text-4xl font-extrabold text-primary mb-8 border-b-4 border-primary/50 pb-2 inline-block">
+                Community Discussion
+            </h2>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                
+                <!-- Submission Form -->
+                <div class="lg:col-span-1 p-6 bg-slate-800 rounded-xl shadow-lg h-fit">
+                    <h3 class="text-xl font-semibold text-gray-50 mb-4">Post a Comment</h3>
+                    <form id="comment-form" onsubmit="submitComment(event)">
+                        <div class="space-y-4">
+                            <div>
+                                <label for="author-name" class="block text-sm font-medium text-gray-300 mb-1">Your Name</label>
+                                <input type="text" id="author-name" required placeholder="Student Trader"
+                                    class="w-full bg-slate-700 border border-slate-600 text-white rounded-lg p-3 focus:ring-primary focus:border-primary">
+                            </div>
+                            <div>
+                                <label for="comment-text" class="block text-sm font-medium text-gray-300 mb-1">Comment</label>
+                                <textarea id="comment-text" rows="4" required placeholder="What are your thoughts on the market today?"
+                                    class="w-full bg-slate-700 border border-slate-600 text-white rounded-lg p-3 focus:ring-primary focus:border-primary"></textarea>
+                            </div>
+                            <button type="submit" class="w-full py-3 bg-primary text-white font-bold rounded-lg hover:bg-blue-600 transition duration-150">
+                                Post Discussion
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- Display Area -->
+                <div class="lg:col-span-2 space-y-6" id="comments-container">
+                    <h3 class="text-xl font-semibold text-gray-50 mb-4">Recent Posts</h3>
+                    
+                    <!-- Example Comment 1 -->
+                    <div class="bg-slate-800 p-4 rounded-lg border-l-4 border-success shadow">
+                        <p class="text-sm font-bold text-success">Veteran Trader</p>
+                        <p class="text-gray-300 italic my-2">"The volatility in TECH is great for day trading, but always manage your risk. This simulator is a good learning tool!"</p>
+                        <p class="text-xs text-gray-500">Posted 5 minutes ago</p>
+                    </div>
+
+                    <!-- Example Comment 2 -->
+                    <div class="bg-slate-800 p-4 rounded-lg border-l-4 border-danger shadow">
+                        <p class="text-sm font-bold text-danger">Newbie Investor</p>
+                        <p class="text-gray-300 italic my-2">"I just bought shares of BANK. Hope it goes up! I wish the UI had a dark mode, oh wait, it does! Great job!"</p>
+                        <p class="text-xs text-gray-500">Posted 1 hour ago</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Global Message Box (for error/success feedback) -->
+    <div id="message-box" class="fixed top-5 right-5 z-[9999] opacity-0 transition-opacity duration-300 pointer-events-none">
+        <div id="message-content" class="px-6 py-3 rounded-lg shadow-xl text-white font-semibold"></div>
+    </div>
+
+    <!-- 5. JavaScript for Simulation and Interactivity -->
+    <script>
+        // --- Core Data Structures ---
+        let stockData = [
+            { symbol: 'TECH', name: 'Tech Solutions Inc.', price: 1500.00, change: 0.00, pctChange: 0.00 },
+            { symbol: 'BANK', name: 'National Bank Co.', price: 980.50, change: 0.00, pctChange: 0.00 },
+            { symbol: 'AUTO', name: 'Future Auto Motors', price: 450.75, change: 0.00, pctChange: 0.00 },
+            { symbol: 'AGRO', name: 'Agri Harvest Corp.', price: 120.20, change: 0.00, pctChange: 0.00 },
+        ];
+
+        let portfolio = {
+            cash: 50000.00,
+            holdings: {}, // e.g., { 'TECH': { shares: 10, cost: 15000.00 } }
+        };
+
+        // --- Utility Functions ---
+
+        // Global utility to show messages instead of alert()
+        function showMessage(message, type = 'info') {
+            const box = document.getElementById('message-box');
+            const content = document.getElementById('message-content');
+            
+            let bgColor = 'bg-gray-600';
+            if (type === 'success') bgColor = 'bg-success';
+            if (type === 'error') bgColor = 'bg-danger';
+            if (type === 'info') bgColor = 'bg-primary';
+            
+            content.className = `px-6 py-3 rounded-lg shadow-xl text-white font-semibold ${bgColor}`;
+            content.textContent = message;
+            
+            box.classList.remove('opacity-0', 'pointer-events-none');
+            
+            setTimeout(() => {
+                box.classList.add('opacity-0', 'pointer-events-none');
+            }, 3000);
+        }
+
+        // Formats a number to Indian Rupees
+        const formatINR = (value) => {
+            return `₹${value.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`;
+        };
+        
+        // --- Trading and Price Simulation Functions ---
+
+        // Updates stock prices with random fluctuations
+        function updatePrices() {
+            stockData.forEach(stock => {
+                const randomFactor = (Math.random() * 0.04 - 0.02); // -2% to +2%
+                const newPrice = stock.price * (1 + randomFactor);
+                
+                const oldPrice = stock.price;
+                const change = newPrice - oldPrice;
+                const pctChange = (change / oldPrice) * 100;
+
+                stock.price = newPrice;
+                stock.change = change;
+                stock.pctChange = pctChange;
+                
+                updateStockCard(stock);
+            });
+
+            updatePortfolioDisplay();
+        }
+
+        // Updates a single stock card in the Market Watch section
+        function updateStockCard(stock) {
+            const card = document.getElementById(`card-${stock.symbol}`);
+            if (!card) return;
+
+            const priceElement = card.querySelector('.current-price');
+            const changeElement = card.querySelector('.price-change');
+
+            const isPositive = stock.change >= 0;
+            const colorClass = isPositive ? 'text-success' : 'text-danger';
+            const sign = isPositive ? '▲' : '▼';
+            
+            // Update the UI elements
+            priceElement.textContent = formatINR(stock.price);
+            
+            changeElement.innerHTML = `
+                <span class="font-bold mr-1">${sign}</span> 
+                ${stock.change.toFixed(2)} (${stock.pctChange.toFixed(2)}%)
+            `;
+            
+            // Apply the color change dynamically
+            changeElement.classList.remove('text-success', 'text-danger');
+            changeElement.classList.add(colorClass);
+
+            // Update portfolio table if holding exists
+            if (portfolio.holdings[stock.symbol]) {
+                updatePortfolioRow(stock);
+            }
+        }
+
+        // Updates the portfolio table row for a specific stock
+        function updatePortfolioRow(stock) {
+            const holding = portfolio.holdings[stock.symbol];
+            if (!holding) return;
+
+            const row = document.getElementById(`holding-${stock.symbol}`);
+            if (!row) return;
+
+            const currentValue = holding.shares * stock.price;
+            const gainLoss = currentValue - holding.cost;
+            const gainLossPct = (gainLoss / holding.cost) * 100;
+
+            const isPositive = gainLoss >= 0;
+            const colorClass = isPositive ? 'text-success' : 'text-danger';
+            
+            row.querySelector('.current-price-val').textContent = formatINR(stock.price);
+            
+            const gainLossElement = row.querySelector('.gain-loss');
+            gainLossElement.textContent = `${formatINR(gainLoss)} (${gainLossPct.toFixed(2)}%)`;
+            
+            gainLossElement.classList.remove('text-success', 'text-danger');
+            gainLossElement.classList.add(colorClass);
+        }
+
+        // Updates the main portfolio summary cards
+        function updatePortfolioDisplay() {
+            let totalHoldingsValue = 0;
+            for (const symbol in portfolio.holdings) {
+                const holding = portfolio.holdings[symbol];
+                const stock = stockData.find(s => s.symbol === symbol);
+                if (stock && holding.shares > 0) {
+                    totalHoldingsValue += holding.shares * stock.price;
+                }
+            }
+
+            const totalPortfolioValue = portfolio.cash + totalHoldingsValue;
+            
+            document.getElementById('cash-balance').textContent = formatINR(portfolio.cash);
+            document.getElementById('holdings-value').textContent = formatINR(totalHoldingsValue);
+            document.getElementById('total-value').textContent = formatINR(totalPortfolioValue);
+        }
+
+        // Handles the Buy/Sell transaction
+        function handleTrade(event) {
+            event.preventDefault();
+            const form = event.target.closest('form');
+            const symbol = form.querySelector('#stock-select').value;
+            const quantity = parseInt(form.querySelector('#quantity').value);
+            const action = event.submitter.getAttribute('data-action');
+            const messageBox = document.getElementById('trade-message');
+
+            if (!symbol || isNaN(quantity) || quantity <= 0) {
+                showMessage('Invalid stock or quantity.', 'error');
+                return;
+            }
+
+            const stock = stockData.find(s => s.symbol === symbol);
+            const currentHolding = portfolio.holdings[symbol] || { shares: 0, cost: 0 };
+            const transactionCost = quantity * stock.price;
+
+            let success = false;
+            let msg = '';
+            
+            // --- BUY LOGIC ---
+            if (action === 'buy') {
+                if (portfolio.cash >= transactionCost) {
+                    portfolio.cash -= transactionCost;
+                    
+                    const newTotalShares = currentHolding.shares + quantity;
+                    const newTotalCost = currentHolding.cost + transactionCost;
+                    const newAvgCost = newTotalCost / newTotalShares;
+                    
+                    portfolio.holdings[symbol] = {
+                        shares: newTotalShares,
+                        cost: newTotalCost,
+                        avgCost: newAvgCost
+                    };
+                    
+                    msg = `Successfully bought ${quantity} shares of ${symbol} for ${formatINR(transactionCost)}.`;
+                    success = true;
+                    updatePortfolioTable(stock); // Rebuild or update the row
+                } else {
+                    msg = `Insufficient cash. Need ${formatINR(transactionCost)}, have ${formatINR(portfolio.cash)}.`;
+                }
+            } 
+            
+            // --- SELL LOGIC ---
+            else if (action === 'sell') {
+                if (currentHolding.shares >= quantity) {
+                    portfolio.cash += transactionCost;
+                    
+                    // Update remaining shares and cost
+                    const remainingShares = currentHolding.shares - quantity;
+                    const fractionalCost = (quantity / currentHolding.shares) * currentHolding.cost;
+                    const remainingCost = currentHolding.cost - fractionalCost;
+
+                    if (remainingShares > 0) {
+                         // Update existing holding with adjusted cost base
+                        portfolio.holdings[symbol] = {
+                            shares: remainingShares,
+                            cost: remainingCost,
+                            avgCost: remainingCost / remainingShares
+                        };
+                    } else {
+                        // All shares sold, remove holding
+                        delete portfolio.holdings[symbol];
+                        document.getElementById('holding-' + symbol)?.remove();
+                    }
+                    
+                    msg = `Successfully sold ${quantity} shares of ${symbol} for ${formatINR(transactionCost)}.`;
+                    success = true;
+                } else {
+                    msg = `Cannot sell ${quantity} shares. You only hold ${currentHolding.shares}.`;
+                }
+            }
+
+            messageBox.innerHTML = `<span class="${success ? 'text-success' : 'text-danger'}">${msg}</span>`;
+            updatePortfolioDisplay();
+            showMessage(msg, success ? 'success' : 'error');
+        }
+
+        // --- UI Rendering Functions ---
+
+        // Initializes the Market Watch section
+        function renderMarketWatch() {
+            const grid = document.getElementById('market-watch-grid');
+            const stockSelect = document.getElementById('stock-select');
+            
+            grid.innerHTML = '';
+            stockSelect.innerHTML = '<option value="" disabled selected>Choose a stock</option>';
+            
+            stockData.forEach(stock => {
+                const isPositive = stock.change >= 0;
+                const colorClass = isPositive ? 'text-success' : 'text-danger';
+                const sign = isPositive ? '▲' : '▼';
+
+                // Add stock option to dropdown
+                const option = document.createElement('option');
+                option.value = stock.symbol;
+                option.textContent = `${stock.symbol} - ${stock.name}`;
+                stockSelect.appendChild(option);
+
+                // Create stock card
+                const card = document.createElement('div');
+                card.id = `card-${stock.symbol}`;
+                card.className = 'bg-card p-5 rounded-xl shadow-lg border border-gray-700 hover:border-primary transition duration-300 transform hover:-translate-y-0.5';
+                card.innerHTML = `
+                    <p class="text-xs text-gray-400">Stock Symbol</p>
+                    <h3 class="text-3xl font-extrabold text-white">${stock.symbol}</h3>
+                    <p class="text-sm text-gray-400 mt-1 mb-4">${stock.name}</p>
+                    
+                    <div class="border-t border-gray-700 pt-3">
+                        <p class="text-sm text-gray-400">Current Price</p>
+                        <p class="current-price text-2xl font-bold text-white">${formatINR(stock.price)}</p>
+                        <p class="price-change ${colorClass} text-sm font-semibold mt-1">
+                            <span class="font-bold mr-1">${sign}</span> 
+                            ${stock.change.toFixed(2)} (${stock.pctChange.toFixed(2)}%)
+                        </p>
+                    </div>
+                    <a href="#trade" class="mt-4 inline-block text-primary hover:underline text-sm font-medium">Trade ${stock.symbol}</a>
+                `;
+                grid.appendChild(card);
+            });
+        }
+        
+        // Updates the portfolio table with the current holdings
+        function updatePortfolioTable(newStock) {
+            const tableBody = document.getElementById('portfolio-body');
+            let hasHoldings = false;
+            
+            tableBody.innerHTML = ''; // Clear existing rows
+
+            for (const symbol in portfolio.holdings) {
+                const holding = portfolio.holdings[symbol];
+                const stock = stockData.find(s => s.symbol === symbol);
+                
+                if (holding.shares > 0 && stock) {
+                    hasHoldings = true;
+                    
+                    const currentValue = holding.shares * stock.price;
+                    const gainLoss = currentValue - holding.cost;
+                    const gainLossPct = (gainLoss / holding.cost) * 100;
+                    
+                    const isPositive = gainLoss >= 0;
+                    const colorClass = isPositive ? 'text-success' : 'text-danger';
+                    
+                    const row = document.createElement('tr');
+                    row.id = `holding-${symbol}`;
+                    row.className = 'text-sm text-white hover:bg-slate-800/50 transition duration-150';
+                    row.innerHTML = `
+                        <td class="py-3 font-semibold">${symbol}</td>
+                        <td class="py-3 text-right">${holding.shares.toFixed(0)}</td>
+                        <td class="py-3 text-right text-gray-400">${formatINR(holding.avgCost.toFixed(2))}</td>
+                        <td class="py-3 text-right current-price-val font-bold">${formatINR(stock.price)}</td>
+                        <td class="py-3 text-right gain-loss ${colorClass} font-medium">${formatINR(gainLoss)} (${gainLossPct.toFixed(2)}%)</td>
+                    `;
+                    tableBody.appendChild(row);
+                }
+            }
+
+            if (!hasHoldings) {
+                tableBody.innerHTML = '<tr class="text-sm text-gray-400"><td colspan="5" class="py-4 text-center">No holdings yet. Buy a stock!</td></tr>';
+            }
+        }
+        
+        // Handles the submission of community comments
+        function submitComment(event) {
+            event.preventDefault();
+            const author = document.getElementById('author-name').value.trim();
+            const text = document.getElementById('comment-text').value.trim();
+            const commentsContainer = document.getElementById('comments-container');
+
+            if (!author || !text) {
+                showMessage('Please enter your name and a comment.', 'error');
+                return;
+            }
+
+            // Determine border color randomly for visual variety
+            const borderColor = Math.random() > 0.5 ? 'border-success' : 'border-primary';
+
+            // Create the new comment element
+            const newComment = document.createElement('div');
+            newComment.className = `bg-slate-800 p-4 rounded-lg border-l-4 ${borderColor} shadow`;
+            newComment.innerHTML = `
+                <p class="text-sm font-bold text-white">${author}</p>
+                <p class="text-gray-300 italic my-2">"${text}"</p>
+                <p class="text-xs text-gray-500">Posted just now</p>
+            `;
+
+            // Prepend to display it first (most recent comment)
+            commentsContainer.prepend(newComment);
+            
+            // Show success message
+            showMessage('Comment posted to community!', 'success');
+            
+            // Reset only the text field, keep the name
+            document.getElementById('comment-text').value = '';
+        }
+
+
+        // --- Initialization ---
+        function initDashboard() {
+            renderMarketWatch();
+            updatePortfolioTable();
+            updatePortfolioDisplay();
+
+            // Set up the real-time price update simulation
+            setInterval(updatePrices, 3000); // Update every 3 seconds
+        }
+
+        // Run initialization on window load
+        window.onload = initDashboard;
+    </script>
+</body>
+</html>
