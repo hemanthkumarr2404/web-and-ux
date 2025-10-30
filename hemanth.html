@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arithmetic Operations Demo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 40px;
+            background-color: #e6e6fa; /* Light Lavender */
+            color: #333;
+        }
+
+        .calculator {
+            max-width: 350px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        h1 {
+            color: #4b0082; /* Indigo */
+            margin-bottom: 20px;
+        }
+
+        input[type="number"] {
+            width: 80px;
+            padding: 8px;
+            margin: 0 5px 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .button-group button {
+            padding: 10px 15px;
+            margin: 5px;
+            background-color: #8a2be2; /* Blue Violet */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background-color 0.2s;
+        }
+
+        .button-group button:hover {
+            background-color: #6a1ba9;
+        }
+
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f0f8ff; /* Alice Blue */
+            border: 2px solid #4b0082;
+            border-radius: 5px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="calculator">
+        <h1>Basic Arithmetic Calculator</h1>
+        <p>Enter two numbers and select an operation:</p>
+
+        <input type="number" id="num1" value="10" placeholder="Number 1">
+        <input type="number" id="num2" value="5" placeholder="Number 2">
+
+        <div class="button-group">
+            <button onclick="calculate('+')">Add (+)</button>
+            <button onclick="calculate('-')">Subtract (-)</button>
+            <button onclick="calculate('*')">Multiply (x)</button>
+            <button onclick="calculate('/')">Divide (÷)</button>
+        </div>
+
+        <div id="result">Result: --</div>
+    </div>
+
+    <script>
+        function calculate(operation) {
+            // 1. DOM Access: Get values from the input fields
+            const num1 = parseFloat(document.getElementById('num1').value);
+            const num2 = parseFloat(document.getElementById('num2').value);
+            const resultElement = document.getElementById('result');
+
+            let result;
+
+            // 2. Input Validation (Basic)
+            if (isNaN(num1) || isNaN(num2)) {
+                resultElement.textContent = "Error: Please enter valid numbers.";
+                return;
+            }
+
+            // 3. Conditional Logic (The core arithmetic)
+            switch (operation) {
+                case '+':
+                    result = num1 + num2;
+                    break;
+                case '-':
+                    result = num1 - num2;
+                    break;
+                case '*':
+                    result = num1 * num2;
+                    break;
+                case '/':
+                    // Division by Zero check
+                    if (num2 === 0) {
+                        resultElement.textContent = "Error: Cannot divide by zero!";
+                        return;
+                    }
+                    result = num1 / num2;
+                    break;
+                default:
+                    resultElement.textContent = "Error: Invalid operation.";
+                    return;
+            }
+
+            // 4. DOM Update: Display the final result
+            resultElement.textContent = `Result: ${num1} ${operation} ${num2} = ${result.toFixed(2)}`;
+        }
+    </script>
+
+</body>
+</html>
